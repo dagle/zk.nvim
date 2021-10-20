@@ -8,4 +8,4 @@ unlet s:save_cpo
 
 let g:loaded_nvim_zk = 1
 
-command! -nargs=? zkSnap lua require'nvim-zk'.zkSnap(<f-args>)
+command! -nargs=? Zksnap lua require'nvim-zk'.zkSnap(<f-args>)

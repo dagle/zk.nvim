@@ -24,4 +24,4 @@ zkIndex
 
 ## Todo
 - [ ] Telescope stuff
-- [ ] Make it feel like 1 plugin and not 2 int 1
+- [ ] Make it feel like 1 plugin and not 2 in 1

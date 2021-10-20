@@ -1,16 +1,16 @@
-local m = {}
+local M = {}
 
 -- as for now, don't configure lsp, this is just above all that
-m.settings = {
+M.settings = {
 	path = "~/zk"
 }
 
 -- Might merge tables in the future
-function m.Setup(setting)
+function M.Setup(setting)
 	m.settings = setting
 end
 
-function m.zkNew(bufnr, title)
+function M.zkNew(bufnr, title)
 	local arg = vim.fn.expand("%:p")
 	local mycmd = {
 		command = "zk.new",
@@ -26,12 +26,12 @@ function m.zkNew(bufnr, title)
 	end)
 end
 
-function m.zkAsk(bufnr)
+function M.zkAsk(bufnr)
 	local title = vim.fn.input("Zk Title: ")
 	m.zkNew(bufnr, title)
 end
 
-function m.zkSnap(title)
+function M.zkSnap(title)
 	local result
 	if title then
 		result = vim.fn.execute("silent !zk new -W " .. m.settings.path .. " -p -t " .. title)
@@ -45,7 +45,7 @@ function m.zkSnap(title)
 end
 
 
-function m.zkIndex(bufnr)
+function M.zkIndex(bufnr)
 	local arg = vim.fn.expand("%:p")
 	local mycmd = {
 		command = "zk.index",
@@ -60,6 +60,9 @@ function m.zkIndex(bufnr)
 	end)
 end
 
+
+
+
 -- TODO telescope functions etc
 
-return m
+return M

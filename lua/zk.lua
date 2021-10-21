@@ -52,7 +52,7 @@ function M.zkIndex(bufnr)
 	local mycmd = {
 		command = "zk.index",
 		arguments = {arg},
-		title = arg
+		-- title = arg
 	}
 	-- vim.lsp.buf_request(bufnr, "workspace/executeCommand", mycmd, function(err, result, ctx, cfg)
 	vim.lsp.buf_request(bufnr, "workspace/executeCommand", mycmd, function (error)
@@ -77,6 +77,8 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local putils = require "telescope.previewers.utils"
 local previewers = require "telescope.previewers"
+-- this might reduce the copy paste
+-- local action_set = require "telescope.actions.set"
 
 function M.search_title(opts)
 	-- maybe move this to oneshot_job
@@ -137,7 +139,97 @@ function M.search_title(opts)
 	  }):find()
 end
 
-function M.search_tag()
+-- search all collections?
+function M.search_tag(opts)
+	local path = M.settings.path .. "/.zk/notebook.db"
+	local tags = sqlite.with_open(path, function(db)
+		return db:select("collections", {select = {"id","name"}})
+	end)
+
+	pickers.new(opts, {
+		prompt_title = "Zk tags",
+		finder = finders.new_table {
+			results = tags,
+			entry_maker = function(entry)
+				return {
+					value = entry,
+					display = entry.name,
+					ordinal = entry.name,
+				}
+			end
+		},
+		sorter = conf.generic_sorter(opts),
+		attach_mappings = function(prompt_bufnr, map)
+			actions.select_default:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				-- local current_picker = action_state.get_current_picker(prompt_bufnr)
+				M.search_by_tag(selection.value.id, opts)
+			end)
+			return true
+		end,
+	}):find()
 end
+
+function M.search_by_tag(tid, opts)
+	local path = M.settings.path .. "/.zk/notebook.db"
+	local titles = sqlite.with_open(path, function(db)
+		return db:eval("SELECT title, raw_content from notes_collections inner join notes ON notes.id = notes_collections.note_id WHERE collection_id = " .. tid)
+	end)
+
+	pickers.new(opts, {
+		prompt_title = "Zk titles",
+		finder = finders.new_table {
+			results = titles,
+			entry_maker = function(entry)
+				return {
+					value = entry,
+					display = entry.title,
+					ordinal = entry.title,
+				}
+			end
+		},
+		sorter = conf.generic_sorter(opts),
+		previewer = previewers.new_buffer_previewer {
+			title = "Zk preview",
+			keep_last_buf = true,
+			define_preview = function(self, entry)
+					vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, vim.split(entry.value.raw_content, "\n"))
+					putils.highlighter(self.state.bufnr, "markdown")
+			end,
+		},
+		-- feels a bit copy-pasty atm
+		attach_mappings = function(prompt_bufnr, map)
+			actions.select_default:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local fpath = M.settings.path .. "/" .. selection.value.path
+				vim.cmd(":e " .. fpath)
+			end)
+			actions.select_horizontal:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local fpath = M.settings.path .. "/" .. selection.value.path
+				vim.cmd(":split " .. fpath)
+			end)
+			actions.select_vertical:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local fpath = M.settings.path .. "/" .. selection.value.path
+				vim.cmd(":vs " .. fpath)
+			end)
+			actions.select_tab:replace(function()
+				actions.close(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local fpath = M.settings.path .. "/" .. selection.value.path
+				vim.cmd(":tabe " .. fpath)
+			end)
+			return true
+		end,
+	  }):find()
+end
+
+
+M.search_tag()
 
 return M

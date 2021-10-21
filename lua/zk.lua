@@ -140,9 +140,4 @@ end
 function M.search_tag()
 end
 
-
-M.search_title()
-
--- TODO telescope functions etc
-
 return M

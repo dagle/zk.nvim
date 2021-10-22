@@ -125,7 +125,7 @@ end
 
 return require("telescope").register_extension({
 	exports = {
-		zk_tag = search_tag,
-		zk_title = search_title,
+		tag = search_tag,
+		title = search_title,
 	}
 })

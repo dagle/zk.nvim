@@ -11,10 +11,14 @@ using packer:
 ```lua
 	use 'dagle/zk.nvim'
 ```
+
 ## Usage
-zk.nvim comes with these global functions:
-zkSnap
-Telescope
+zk.nvim comes with these lua function:
+zkSnap 
+
+Telescope:
+After registering the zk extension
+Telescope zk {title, tag}
 
 For lsp we have:
 zkNew
@@ -22,6 +26,9 @@ zkAsk
 zkIndex
 
 
-## Todo
-- [ ] Telescope stuff
-- [ ] Make it feel like 1 plugin and not 2 in 1
+and in vimL:
+Zksnap
+ZkNew
+ZkIndex
+
+I recommened binding the lsp functions in the attach function

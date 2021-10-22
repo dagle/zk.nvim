@@ -1,6 +1,6 @@
 local M = {}
 
-function M.Setup(args)
+function M.setup(args)
 	args = args or {}
 	local defs = {
 		path = "~/zk",
@@ -10,12 +10,19 @@ function M.Setup(args)
 end
 
 function M.zkNew(bufnr, title)
-	local arg = vim.fn.expand("%:p")
-	local mycmd = {
-		command = "zk.new",
-		arguments = {arg},
-		title = title,
-	}
+	local arg = vim.fn.expand(Zk_config.path)
+	local mycmd
+	if title then
+		mycmd = {
+			command = "zk.new",
+			arguments = {arg, {title = title}},
+		}
+	else
+		mycmd = {
+			command = "zk.new",
+			arguments = {arg}
+		}
+	end
 	vim.lsp.buf_request(bufnr, "workspace/executeCommand", mycmd, function(error, result)
 		if result and not error then
 			vim.cmd(":e " .. result.path)
@@ -43,11 +50,10 @@ end
 
 
 function M.zkIndex(bufnr)
-	local arg = vim.fn.expand("%:p")
+	local arg = vim.fn.expand(Zk_config.path)
 	local mycmd = {
 		command = "zk.index",
 		arguments = {arg},
-		-- title = arg
 	}
 	vim.lsp.buf_request(bufnr, "workspace/executeCommand", mycmd, function (error)
 		if error then

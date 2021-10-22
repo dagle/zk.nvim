@@ -9,20 +9,12 @@ function M.setup(args)
 	_G.zk_config = Zk_config
 end
 
-function M.zkNew(bufnr, title)
+function M.zkNew(bufnr, opts)
 	local arg = vim.fn.expand(Zk_config.path)
-	local mycmd
-	if title then
-		mycmd = {
-			command = "zk.new",
-			arguments = {arg, {title = title}},
-		}
-	else
-		mycmd = {
-			command = "zk.new",
-			arguments = {arg}
-		}
-	end
+	local mycmd = {
+		command = "zk.new",
+		arguments = {arg, opts},
+	}
 	vim.lsp.buf_request(bufnr, "workspace/executeCommand", mycmd, function(error, result)
 		if result and not error then
 			vim.cmd(":e " .. result.path)
@@ -34,7 +26,7 @@ end
 
 function M.zkAsk(bufnr)
 	local title = vim.fn.input("Zk Title: ")
-	M.zkNew(bufnr, title)
+	M.zkNew(bufnr, {title = title})
 end
 
 function M.zkSnap(title)

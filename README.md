@@ -5,7 +5,7 @@ to speak to to the lsp.
 
 ## Install
 First make sure to have [zk](https://github.com/mickael-menu/zk) installed.
-Then t install I recommend using your favourite plugin manager. Here is an example
+Then, I recommend installing it using your favorite plugin manager. Here is an example
 using packer:
 
 ```lua

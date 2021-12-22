@@ -19,7 +19,7 @@ function M.zkNew(bufnr, opts)
 		if result and not error then
 			vim.cmd(":e " .. result.path)
 		else
-			print(error)
+			error(error)
 		end
 	end)
 end
@@ -40,7 +40,6 @@ function M.zkSnap(title)
 	vim.api.nvim_command('topleft new ' .. trimmed)
 end
 
-
 function M.zkIndex(bufnr)
 	local arg = vim.fn.expand(Zk_config.path)
 	local mycmd = {
@@ -49,7 +48,7 @@ function M.zkIndex(bufnr)
 	}
 	vim.lsp.buf_request(bufnr, "workspace/executeCommand", mycmd, function (error)
 		if error then
-			print(error)
+			error(error)
 		end
 	end)
 end
